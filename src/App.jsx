@@ -1,17 +1,20 @@
 import { ConnectButton, useCurrentAccount } from "@mysten/dapp-kit";
-import Temp from "./components/temp";
+import Navbar from "./components/Navbar";
+import Count from "./components/Count";
 
 function App() {
     const account = useCurrentAccount();
 
     return (
         <>
-            <div className="h-screen w-screen flex flex-col items-center justify-center">
-                <ConnectButton />
+            <div className="h-screen w-screen">
+                <div className="flex items-center justify-between h-[80px] bg-stone-300 px-12 py-3">
+                    <ConnectButton />
+                    {account && <Navbar />}
+                </div>
                 {account && (
                     <div>
-                        <div>Address: {account.address}</div>
-                        <Temp />
+                        <Count />
                     </div>
                 )}
             </div>

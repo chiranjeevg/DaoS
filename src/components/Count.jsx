@@ -1,19 +1,15 @@
-import { getAddressCoins } from "../utils/getAddressCoins";
 import React, { useState, useEffect } from "react";
 import { useNetworkVariable } from "../networkConfig";
 import {
-    useCurrentAccount,
     useSignAndExecuteTransactionBlock,
     useSuiClient,
     useSuiClientQuery,
 } from "@mysten/dapp-kit";
 import { TransactionBlock } from "@mysten/sui.js/transactions";
 
-const Temp = () => {
+const Count = () => {
     const counterObjId =
         "0xba3219970df451e981ea67f870d7629f4254767ef15338ed696508c6d9016ce6";
-    const account = useCurrentAccount();
-    const [suiAccountBalance, setSuiAccountBalance] = useState(0);
     const [countValue, setCountValue] = useState(0);
 
     const client = useSuiClient();
@@ -33,12 +29,6 @@ const Temp = () => {
                 setCountValue(data.data?.content?.fields.value);
         }
     }, [data]);
-
-    if (account) {
-        getAddressCoins(account.address).then((data) => {
-            setSuiAccountBalance(data);
-        });
-    }
 
     function callIncrementFunction() {
         const txb = new TransactionBlock();
@@ -67,10 +57,8 @@ const Temp = () => {
             }
         );
     }
-
     return (
-        <>
-            <div>Balance : {suiAccountBalance} SUI </div>;
+        <div>
             <div className="p-40 flex space-x-5 items-center justify-center">
                 <div> Current Counter Value : {countValue} </div>
                 <button
@@ -79,8 +67,8 @@ const Temp = () => {
                     Increment
                 </button>
             </div>
-        </>
+        </div>
     );
 };
 
-export default Temp;
+export default Count;
