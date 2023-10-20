@@ -1,13 +1,19 @@
 import { ConnectButton, useCurrentAccount } from "@mysten/dapp-kit";
+import Temp from "./components/temp";
 
 function App() {
     const account = useCurrentAccount();
 
     return (
         <>
-            <div className="mx-auto flex items-center justify-center">
-                <ConnectButton className="w-1/2" />
-                {account ? `Account : ${account}` : "Wallet Not Connected !"}
+            <div className="h-screen w-screen flex flex-col items-center justify-center">
+                <ConnectButton />
+                {account && (
+                    <div>
+                        <div>Address: {account.address}</div>
+                        <Temp />
+                    </div>
+                )}
             </div>
         </>
     );
