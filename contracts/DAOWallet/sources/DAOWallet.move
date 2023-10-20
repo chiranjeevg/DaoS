@@ -20,6 +20,7 @@ module daowallet::DAOWallet{
     approval_threshold: u8,
     cancellation_threshold: u8,
     sui:Balance<SUI>,
+    lockedbalance: u64,
     members: VecMap<address, bool>,
     donation_nft_name: String,
     donation_nft_description: String,
@@ -84,6 +85,7 @@ module daowallet::DAOWallet{
             approval_threshold,
             cancellation_threshold,
             sui:balance::zero<SUI>(),
+            lockedbalance: 0,
             members: vec_map::empty(),
             donation_nft_name: string::utf8(donation_nft_name),
             donation_nft_description: string::utf8(donation_nft_description),
@@ -138,6 +140,7 @@ module daowallet::DAOWallet{
       to: to,
       amount: amount,
     };
+    wallet.lockedbalance = wallet.lockedbalance + amount;
     vec_map::insert(&mut tokenProposal.proposal.votes, tx_context::sender(ctx), true);
     vector::push_back(&mut wallet.tokenProposals, tokenProposal);
   }
@@ -157,6 +160,7 @@ module daowallet::DAOWallet{
       proposal.status = ExecutedStatus;
       let coin = coin::take(&mut wallet.sui, tokenProposal.amount, ctx);
       transfer::public_transfer(coin, tokenProposal.to);
+      wallet.lockedbalance = wallet.lockedbalance - tokenProposal.amount;
     }
   }
 
@@ -173,6 +177,7 @@ module daowallet::DAOWallet{
     let totalMembers = vec_map::size(&wallet.members);
     if (100 * proposal.cancellation_votes / totalMembers > (wallet.cancellation_threshold as u64)){
       proposal.status = CancelledStatus;
+      wallet.lockedbalance = wallet.lockedbalance - tokenProposal.amount;
     }
   }
 
