@@ -1,0 +1,2 @@
+DevNet:
+ - contract ID: 0x56627063468a8eb77a57a3122cb435ebbdb2f85ded5b5d0a48881674561d6cdf
