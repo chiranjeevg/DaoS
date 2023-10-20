@@ -22,7 +22,6 @@ const Count = () => {
             showOwner: true,
         },
     });
-
     useEffect(() => {
         if (data) {
             data.data?.content &&
