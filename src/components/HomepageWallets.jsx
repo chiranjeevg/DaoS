@@ -36,6 +36,9 @@ const HomepageWallets = () => {
                 txb.pure.string(event.target.walletDesc.value),
                 txb.pure.u8(event.target.approvalThreshold.value),
                 txb.pure.u8(event.target.cancellationThreshold.value),
+                txb.pure.string(event.target.donationNftName.value),
+                txb.pure.string(event.target.donationNftDesc.value),
+                txb.pure.string(event.target.donationNftUrl.value),
             ],
             target: `${packageId}::${packageName}::create_wallet`,
         });
@@ -123,6 +126,24 @@ const HomepageWallets = () => {
                                 className="w-full rounded-lg border-gray-200 p-4 pr-12 text-sm shadow-sm"
                                 placeholder="Enter cancellation threshold [ 0 - 100 ]"
                                 required
+                            />
+                            <div className="pt-3 mx-auto max-w-lg text-center">
+                                <h1 className="text-xl font-bold">
+                                    Add Donation NFT Details
+                                </h1>
+                            </div>
+                            <input
+                                type="text"
+                                name="donationNftName"
+                                className="w-full rounded-lg border-gray-200 p-4 pr-12 text-sm shadow-sm"
+                                placeholder="Enter donation NFT name"
+                                required
+                            />
+                            <textarea
+                                rows={4}
+                                name="donationNftDesc"
+                                className="w-full rounded-lg border-gray-200 p-4 pr-12 text-sm shadow-sm"
+                                placeholder="Enter donation NFT description"
                             />
                             <input
                                 type="text"
