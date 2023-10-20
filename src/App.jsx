@@ -15,7 +15,6 @@ function App() {
                 </div>
                 {account && (
                     <div>
-                        {/* <Count /> */}
                         <HomepageWallets />
                     </div>
                 )}

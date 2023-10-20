@@ -22,12 +22,18 @@ const WalletCard = ({ wallet }) => {
                         alt="Signer Blockie Image"
                     />
                 </div>
-                <div className="flex flex-col space-y-1 text-right">
+                <div className="flex flex-col text-right space-y-1">
                     <span className="font-mono text-sm font-semibold italic">
                         {wallet.id}
                     </span>
+                    <span className="font-mono text-sm font-semibold">
+                        <span className="font-sans font-normal">
+                            Total Members : &nbsp;
+                        </span>
+                        {wallet.members.length}
+                    </span>
                     {account &&
-                    wallet.owner.address.toLowerCase() ==
+                    wallet.owner.toLowerCase() ==
                         account?.address.toLowerCase() ? (
                         <>
                             <span className="font-mono text-sm font-semibold">
@@ -37,7 +43,7 @@ const WalletCard = ({ wallet }) => {
                     ) : (
                         <>
                             <span className="font-mono text-sm font-medium">
-                                #signer
+                                #member
                             </span>
                         </>
                     )}
@@ -45,13 +51,13 @@ const WalletCard = ({ wallet }) => {
             </div>
 
             <h5 className="mt-4 text-xl font-bold text-gray-900 capitalize">
-                {wallet.metadata.title}
+                {wallet.name}
             </h5>
 
             <p className="mt-2 hidden text-sm sm:block">
-                {wallet.metadata.description.length > 150
-                    ? wallet.metadata.description.substring(0, 150) + "..."
-                    : wallet.metadata.description}
+                {wallet.description.length > 150
+                    ? wallet.description.substring(0, 150) + "..."
+                    : wallet.description}
             </p>
         </div>
     );
