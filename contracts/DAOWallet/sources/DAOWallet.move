@@ -12,7 +12,8 @@ module daowallet::DAOWallet{
   use sui::balance::{Self, Balance, Supply};
   use sui::sui::SUI;
 
-  struct Wallet has store{
+  struct Wallet has key{
+    id: UID,
     owner: address,
     name: string::String,
     description: string::String,
@@ -23,14 +24,9 @@ module daowallet::DAOWallet{
     tokenProposals: vector<TokenProposal>,
   }
 
-  struct WalletFactory has key {
-    id: UID,
-    wallets: vector<Wallet>,
-  }
-
   struct Member has key{
     id: UID,
-    wallet_index: u64,
+    wallet: object::ID,
   }
 
   struct Proposal has store {
@@ -47,9 +43,10 @@ module daowallet::DAOWallet{
     amount: u64,
   }
 
-  public entry fun create_wallet(factory: &mut WalletFactory, name:vector<u8>, description:vector<u8>, approval_threshold: u8, cancellation_threshold: u8, ctx: &mut TxContext) {
+  public entry fun create_wallet(name:vector<u8>, description:vector<u8>, approval_threshold: u8, cancellation_threshold: u8, ctx: &mut TxContext) {
         // create multisig resource
         let wallet = Wallet {
+            id: object::new(ctx),
             owner: tx_context::sender(ctx),
             name: string::utf8(name),
             description: string::utf8(description),
@@ -65,25 +62,15 @@ module daowallet::DAOWallet{
         // };
 
         vec_map::insert(&mut wallet.members, tx_context::sender(ctx), true);
-        let index = vector::length(&factory.wallets);
-        vector::push_back(&mut factory.wallets, wallet);
-        let member = Member {
-          id: object::new(ctx),
-          wallet_index: index,
-        };
-        transfer::transfer(member);
+        transfer::share_object(wallet)
   }
 
-
-
   public entry fun add_member(wallet: &mut Wallet,new_member: address, name: vector<u8>, ctx: &mut TxContext){
-
     vec_map::insert(&mut wallet.members, new_member, true);
     transfer::transfer(Member {
       id: object::new(ctx),
-      wallet: object::id_to_address(wallet.id),
+      wallet: object::id(wallet),
     },new_member);
-
   }
 
   public entry fun donate(wallet: &mut Wallet,sui: Coin<SUI>){
