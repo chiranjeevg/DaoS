@@ -12,23 +12,25 @@ module daowallet::DAOWallet{
   use sui::balance::{Self, Balance, Supply};
   use sui::sui::SUI;
 
-
-  struct Member has store {
-    id:UID,
-    owner:address,
-    name:string::String,
-  }
-
-  struct Wallet has key{
-    id: UID,
+  struct Wallet has store{
     owner: address,
     name: string::String,
     description: string::String,
     approval_threshold: u8,
     cancellation_threshold: u8,
     sui:Balance<SUI>,
-    participants: VecMap<address, bool>,
+    members: VecMap<address, bool>,
     tokenProposals: vector<TokenProposal>,
+  }
+
+  struct WalletFactory has key {
+    id: UID,
+    wallets: vector<Wallet>,
+  }
+
+  struct Member has key{
+    id: UID,
+    wallet_index: u64,
   }
 
   struct Proposal has store {
@@ -45,17 +47,16 @@ module daowallet::DAOWallet{
     amount: u64,
   }
 
-  public entry fun create_wallet(name:vector<u8>, description:vector<u8>, participant: address, approval_threshold: u8, cancellation_threshold: u8, ctx: &mut TxContext) {
+  public entry fun create_wallet(factory: &mut WalletFactory, name:vector<u8>, description:vector<u8>, approval_threshold: u8, cancellation_threshold: u8, ctx: &mut TxContext) {
         // create multisig resource
         let wallet = Wallet {
-            id: object::new(ctx),
             owner: tx_context::sender(ctx),
             name: string::utf8(name),
             description: string::utf8(description),
             approval_threshold,
             cancellation_threshold,
             sui:balance::zero<SUI>(),
-            participants: vec_map::empty(),
+            members: vec_map::empty(),
             tokenProposals: vector::empty(),
         };
         // while (!vector::is_empty(&participants)) {
@@ -63,12 +64,26 @@ module daowallet::DAOWallet{
         //     vec_map::insert(&mut wallet.participants, participant, true);
         // };
 
-        vec_map::insert(&mut wallet.participants, participant, true);
-        transfer::share_object(wallet)
+        vec_map::insert(&mut wallet.members, tx_context::sender(ctx), true);
+        let index = vector::length(&factory.wallets);
+        vector::push_back(&mut factory.wallets, wallet);
+        let member = Member {
+          id: object::new(ctx),
+          wallet_index: index,
+        };
+        transfer::transfer(member);
   }
 
-  public fun get_wallet(self: &Wallet): (&address, &string::String, &string::String, &u8, &u8, &VecMap<address, bool>, &vector<TokenProposal> ){
-    (&self.owner, &self.name, &self.description, &self.approval_threshold, &self.cancellation_threshold, &self.participants, &self.tokenProposals )
+
+
+  public entry fun add_member(wallet: &mut Wallet,new_member: address, name: vector<u8>, ctx: &mut TxContext){
+
+    vec_map::insert(&mut wallet.members, new_member, true);
+    transfer::transfer(Member {
+      id: object::new(ctx),
+      wallet: object::id_to_address(wallet.id),
+    },new_member);
+
   }
 
   public entry fun donate(wallet: &mut Wallet,sui: Coin<SUI>){
