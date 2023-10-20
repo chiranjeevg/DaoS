@@ -12,13 +12,6 @@ module daowallet::DAOWallet{
   use sui::balance::{Self, Balance, Supply};
   use sui::sui::SUI;
 
-
-  struct Member has store {
-    id:UID,
-    owner:address,
-    name:string::String,
-  }
-
   struct Wallet has key{
     id: UID,
     owner: address,
@@ -27,8 +20,13 @@ module daowallet::DAOWallet{
     approval_threshold: u8,
     cancellation_threshold: u8,
     sui:Balance<SUI>,
-    participants: VecMap<address, bool>,
+    members: VecMap<address, bool>,
     tokenProposals: vector<TokenProposal>,
+  }
+
+  struct Member has key{
+    id: UID,
+    wallet: object::ID,
   }
 
   struct Proposal has store {
@@ -45,7 +43,7 @@ module daowallet::DAOWallet{
     amount: u64,
   }
 
-  public entry fun create_wallet(name:vector<u8>, description:vector<u8>, participant: address, approval_threshold: u8, cancellation_threshold: u8, ctx: &mut TxContext) {
+  public entry fun create_wallet(name:vector<u8>, description:vector<u8>, approval_threshold: u8, cancellation_threshold: u8, ctx: &mut TxContext) {
         // create multisig resource
         let wallet = Wallet {
             id: object::new(ctx),
@@ -55,7 +53,7 @@ module daowallet::DAOWallet{
             approval_threshold,
             cancellation_threshold,
             sui:balance::zero<SUI>(),
-            participants: vec_map::empty(),
+            members: vec_map::empty(),
             tokenProposals: vector::empty(),
         };
         // while (!vector::is_empty(&participants)) {
@@ -63,12 +61,16 @@ module daowallet::DAOWallet{
         //     vec_map::insert(&mut wallet.participants, participant, true);
         // };
 
-        vec_map::insert(&mut wallet.participants, participant, true);
+        vec_map::insert(&mut wallet.members, tx_context::sender(ctx), true);
         transfer::share_object(wallet)
   }
 
-  public fun get_wallet(self: &Wallet): (&address, &string::String, &string::String, &u8, &u8, &VecMap<address, bool>, &vector<TokenProposal> ){
-    (&self.owner, &self.name, &self.description, &self.approval_threshold, &self.cancellation_threshold, &self.participants, &self.tokenProposals )
+  public entry fun add_member(wallet: &mut Wallet,new_member: address, name: vector<u8>, ctx: &mut TxContext){
+    vec_map::insert(&mut wallet.members, new_member, true);
+    transfer::transfer(Member {
+      id: object::new(ctx),
+      wallet: object::id(wallet),
+    },new_member);
   }
 
   public entry fun donate(wallet: &mut Wallet,sui: Coin<SUI>){
