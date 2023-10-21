@@ -86,6 +86,36 @@ const RightPane = ({ wallet, account }) => {
 
     async function handleNewProposal(event) {
         event.preventDefault();
+        const toAddress = event.target.toAddress.value;
+        const amount = parseInt(parseFloat(event.target.amount.value) * 10 ** 9);
+
+        const txb = new TransactionBlock()
+
+        txb.moveCall({
+          arguments: [txb.object(event.target.daoAddress.value), txb.pure.address(toAddress), txb.pure.u64(amount)],
+          target: `${packageId}::${packageName}::create_token_praposal`,
+        })
+
+        signAndExecute(
+          {
+            transactionBlock: txb,
+            options: {
+              showEffects: true,
+              showObjectChanges: true,
+            },
+          },
+          {
+            onSuccess: tx => {
+              client.waitForTransactionBlock({ digest: tx.digest }).then(() => {
+                setTimeout(() => {
+                  wallet.members.push(event.target.memberAddress.value)
+                  closeSignerModal()
+                }, 1000)
+              })
+            },
+          }
+        )
+
     }
 
     return wallet ? (
@@ -175,9 +205,17 @@ const RightPane = ({ wallet, account }) => {
                         <input
                             type="text"
                             required
-                            id="memberAddress"
+                            id="toAddress"
                             className="w-full rounded border-0 p-3 text-sm text-gray-900 ring-gray-900 focus:ring-2 my-2"
-                            placeholder="Member Address"
+                            placeholder="Address to receive SUI tokens"
+                        />
+
+                        <input
+                            type="text"
+                            required
+                            id="amount"
+                            className="w-full rounded border-0 p-3 text-sm text-gray-900 ring-gray-900 focus:ring-2 my-2"
+                            placeholder="Amount of SUI tokens"
                         />
 
                         <button
