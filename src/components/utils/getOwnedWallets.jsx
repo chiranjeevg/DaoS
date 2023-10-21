@@ -61,6 +61,7 @@ const GetOwnedWalletObjects = () => {
                             name: fields.name,
                             owner: fields.owner,
                             suiBalance: fields.sui / 10 ** 9,
+                            lockedBalance: fields.lockedbalance / 10 ** 9,
                             tokenProposals: fields.tokenProposals, //TODO: process tokenProposals
                             members: [],
                         };

@@ -4,6 +4,8 @@ import TopSectionPage from "./TopSectionPage";
 
 const RightPane = ({ wallet, account }) => {
     const [showAddSignerBox, setShowAddSignerBox] = useState(false);
+    const [showCreateProposalBox, setShowCreateProposalBox] = useState(false);
+
     const customStyles = {
         content: {
             top: "50%",
@@ -16,15 +18,27 @@ const RightPane = ({ wallet, account }) => {
         },
     };
 
-    function openModal() {
+    function openSignerModal() {
         setShowAddSignerBox(true);
     }
 
-    function closeModal() {
+    function closeSignerModal() {
         setShowAddSignerBox(false);
     }
 
+    function openProposalModal() {
+        setShowCreateProposalBox(true);
+    }
+
+    function closeProposalModal() {
+        setShowCreateProposalBox(false);
+    }
+
     async function handleAddNewMember(event) {
+        event.preventDefault();
+    }
+
+    async function handleNewProposal(event) {
         event.preventDefault();
     }
 
@@ -32,13 +46,13 @@ const RightPane = ({ wallet, account }) => {
         <>
             <TopSectionPage
                 setShowAddSignerBox={setShowAddSignerBox}
-                showAddSignerBox={showAddSignerBox}
+                setShowCreateProposalBox={setShowCreateProposalBox}
                 account={account}
                 wallet={wallet}
             />
             <Modal
                 isOpen={showAddSignerBox}
-                onRequestClose={closeModal}
+                onRequestClose={closeSignerModal}
                 contentLabel="Example Modal"
                 style={customStyles}>
                 <div className="min-w-[28rem] p-5">
@@ -48,7 +62,7 @@ const RightPane = ({ wallet, account }) => {
                         </h2>
                         <button
                             className="inline-block rounded bg-gray-900 px-4 py-2.5 text-sm font-medium text-white transition hover:scale-110 hover:shadow-xl focus:outline-none focus:ring active:bg-gray-500 disabled:scale-100 disabled:bg-gray-500 disabled:hover:shadow-none"
-                            onClick={closeModal}>
+                            onClick={closeSignerModal}>
                             x
                         </button>
                     </div>
@@ -78,6 +92,52 @@ const RightPane = ({ wallet, account }) => {
                             className="inline-block rounded bg-lime-600 px-8 py-3 text-base font-medium text-white transition hover:scale-110 hover:shadow-xl focus:outline-none focus:ring active:bg-lime-500 mt-5 w-full"
                             type="submit">
                             Add Member
+                        </button>
+                    </form>
+                </div>
+            </Modal>
+            <Modal
+                isOpen={showCreateProposalBox}
+                onRequestClose={closeProposalModal}
+                contentLabel="Example Modal"
+                style={customStyles}>
+                <div className="min-w-[28rem] p-5">
+                    <div className="mb-4 flex justify-between">
+                        <h2 className="my-auto inline-block text-xl font-bold">
+                            Add New Proposal
+                        </h2>
+                        <button
+                            className="inline-block rounded bg-gray-900 px-4 py-2.5 text-sm font-medium text-white transition hover:scale-110 hover:shadow-xl focus:outline-none focus:ring active:bg-gray-500 disabled:scale-100 disabled:bg-gray-500 disabled:hover:shadow-none"
+                            onClick={closeProposalModal}>
+                            x
+                        </button>
+                    </div>
+
+                    <form
+                        className="flex h-full w-full flex-col items-center justify-center"
+                        onSubmit={handleNewProposal}>
+                        <input
+                            type="text"
+                            id="daoAddress"
+                            required
+                            disabled
+                            value={wallet.id}
+                            className="w-full rounded border-0 p-3 text-sm text-gray-900 ring-gray-900 focus:ring-2 my-2 border-gray-800"
+                            placeholder="DAO Address"
+                        />
+
+                        <input
+                            type="text"
+                            required
+                            id="memberAddress"
+                            className="w-full rounded border-0 p-3 text-sm text-gray-900 ring-gray-900 focus:ring-2 my-2"
+                            placeholder="Member Address"
+                        />
+
+                        <button
+                            className="inline-block rounded bg-lime-600 px-8 py-3 text-base font-medium text-white transition hover:scale-110 hover:shadow-xl focus:outline-none focus:ring active:bg-lime-500 mt-5 w-full"
+                            type="submit">
+                            Create Proposal
                         </button>
                     </form>
                 </div>

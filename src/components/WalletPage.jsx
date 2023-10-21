@@ -17,7 +17,7 @@ const WalletPage = () => {
 
     return (
         <div className="h-full w-full">
-            {/* <div className="flex items-center justify-start h-[80px] bg-stone-300 px-12 py-3 space-x-4">
+            <div className="flex items-center justify-start h-[80px] bg-stone-300 px-12 py-3 space-x-4">
                 <div
                     className="h-12 w-12 cursor-pointer overflow-hidden rounded"
                     onClick={() => {
@@ -29,7 +29,7 @@ const WalletPage = () => {
                     />
                 </div>
                 {account && <Navbar />}
-            </div> */}
+            </div>
             {state ? <RightPane wallet={state} account={account} /> : <></>}
         </div>
     );

@@ -8,7 +8,7 @@ import {
 import WalletCard from "./WalletCard";
 import GetOwnedWalletObjects from "./utils/getOwnedWallets";
 import { useNetworkVariable } from "../networkConfig";
-import { TransactionBlock } from "@mysten/sui.js/transactions";
+import { TransactionBlock, Transactions } from "@mysten/sui.js/transactions";
 
 const HomepageWallets = () => {
     const [wallets, setWallets] = useState([]);
@@ -91,12 +91,14 @@ const HomepageWallets = () => {
     async function handleDonation(event) {
         event.preventDefault();
         const txb = new TransactionBlock();
-        const [coin] = txb.splitCoins(txb.gas, [1]);
-        const res = txb.transferObjects([coin], event.target.daoAddress.value);
-        console.log(coin, res);
+        const coin = txb.add(
+            Transactions.SplitCoins(txb.gas, [
+                txb.pure(Number(event.target.amount.value) * 10 ** 9),
+            ])
+        );
 
         txb.moveCall({
-            arguments: [txb.object(event.target.daoAddress.value), [coin]],
+            arguments: [txb.object(event.target.daoAddress.value), coin],
             target: `${packageId}::${packageName}::donate`,
         });
 
@@ -114,6 +116,7 @@ const HomepageWallets = () => {
                         .waitForTransactionBlock({ digest: tx.digest })
                         .then(() => {
                             closeModal();
+                            window.location.reload();
                         });
                 },
             }

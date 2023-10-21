@@ -5,7 +5,7 @@ const TopSectionPage = ({
     wallet,
     account,
     setShowAddSignerBox,
-    showAddSignerBox,
+    setShowCreateProposalBox,
 }) => {
     return (
         <section className="flex items-center justify-center h-56 w-full bg-purple-800 px-32 text-white">
@@ -17,7 +17,7 @@ const TopSectionPage = ({
                         viewBox="0 0 24 24"
                         strokeWidth={3.5}
                         stroke="currentColor"
-                        className="h-5 w-5 cursor-pointer">
+                        className="h-5 w-5 cursor-pointer text-black">
                         <path
                             strokeLinecap="round"
                             strokeLinejoin="round"
@@ -26,7 +26,7 @@ const TopSectionPage = ({
                     </svg>
                 </Link>
             </div>
-            <div className="flex items-center space-x-10">
+            <div className="flex items-center justify-center space-x-10">
                 <div
                     className=" self-start overflow-hidden rounded"
                     onClick={() => {
@@ -38,33 +38,73 @@ const TopSectionPage = ({
                     />
                 </div>
                 <div className="flex flex-col">
-                    <span className="text-base">DAO Wallet Contract</span>
+                    <span className="text-sm">DAO Wallet Contract</span>
                     <span className="font-mono text-lg font-bold">
                         {wallet.id}
                     </span>
-                    <div className="mt-8 flex items-center justify-between space-x-16 px-4">
+                    <span className="font-mono text-xs font-bold">
+                        Owner : {wallet.owner}
+                    </span>
+                    <div className="mt-3 flex items-center justify-evenly space-x-16 px-4">
                         <div className="flex flex-col items-center tracking-tighter">
                             <p className="font-mono text-lg font-semibold">
-                                {wallet.members.length}
+                                {wallet.suiBalance}
+                                <span className="italic text-xs"> SUI</span>
                             </p>
-                            <p className="text-xs">Members</p>
+                            <p className="text-base font-medium">Balance</p>
+                        </div>
+                        <div className="flex flex-col items-center tracking-tighter">
+                            <p className="font-mono text-lg font-semibold">
+                                {wallet.lockedBalance}
+                                <span className="italic text-xs"> SUI</span>
+                            </p>
+                            <p className="text-base font-medium">
+                                Locked Balance
+                            </p>
                         </div>
                         <div className="flex flex-col">
-                            Approval threshold : {wallet.approvalThreshold}
+                            <div className="text-xs font-medium">
+                                Total Members : &nbsp;
+                                <span className="italic text-sm tracking-wider cursor-pointer">
+                                    {wallet.members.length}
+                                </span>
+                            </div>
+                            <div className="text-xs font-medium">
+                                Approval threshold : &nbsp;
+                                <span className="italic text-sm tracking-wider cursor-pointer">
+                                    {wallet.approvalThreshold}
+                                </span>
+                            </div>
+                            <div className="text-xs font-medium">
+                                Cancellation threshold : &nbsp;
+                                <span className="italic text-sm tracking-wider cursor-pointer">
+                                    {wallet.cancellationThreshold}
+                                </span>
+                            </div>
                         </div>
-                        {account &&
-                            account.address.toLowerCase() ===
-                                wallet.owner.toLowerCase() &&
-                            !showAddSignerBox && (
-                                <button
-                                    className="inline-block rounded bg-indigo-200 px-8 py-3 text-sm font-medium transition hover:scale-110 hover:shadow-xl focus:outline-none focus:ring active:bg-indigo-500 min-w-[16rem] text-black"
-                                    onClick={() => {
-                                        setShowAddSignerBox(true);
-                                    }}>
-                                    Add Member
-                                </button>
-                            )}
                     </div>
+                </div>
+                <div className="flex flex-col space-y-5">
+                    {account &&
+                        account.address.toLowerCase() ===
+                            wallet.owner.toLowerCase() && (
+                            <button
+                                className="inline-block rounded bg-indigo-200 px-8 py-3 text-sm font-medium transition hover:scale-110 hover:shadow-xl focus:outline-none focus:ring active:bg-indigo-500 min-w-[16rem] text-black"
+                                onClick={() => {
+                                    setShowAddSignerBox(true);
+                                }}>
+                                Add Member
+                            </button>
+                        )}
+                    {wallet && (
+                        <button
+                            className="inline-block rounded bg-indigo-200 px-8 py-3 text-sm font-medium transition hover:scale-110 hover:shadow-xl focus:outline-none focus:ring active:bg-indigo-500 min-w-[16rem] text-black"
+                            onClick={() => {
+                                setShowCreateProposalBox(true);
+                            }}>
+                            Create Proposal
+                        </button>
+                    )}
                 </div>
             </div>
         </section>
