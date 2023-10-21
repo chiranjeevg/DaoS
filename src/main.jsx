@@ -26,7 +26,7 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById("root")).render(
     <QueryClientProvider client={queryClient}>
         <SuiClientProvider networks={networkConfig} defaultNetwork="devnet">
-            <WalletProvider autoConnect={true}>
+            <WalletProvider>
                 <RouterProvider router={router} />
             </WalletProvider>
         </SuiClientProvider>
