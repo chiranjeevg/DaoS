@@ -26,6 +26,7 @@ const TransactionsHistoryPage = ({ account, wallet }) => {
                     });
                     return (
                         <TransactionCard
+                            wallet={wallet}
                             key={transaction.id}
                             id={transaction.id}
                             creator={transaction.creator}

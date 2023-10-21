@@ -71,7 +71,7 @@ const GetOwnedWalletObjects = () => {
                             walletObj.members.push(mem.fields?.key);
                         });
 
-                        fields.tokenProposals.forEach((obj) => {
+                        fields.tokenProposals.forEach((obj, index) => {
                             const proposalObj = {
                                 amount: Number(obj.fields?.amount) / 10 ** 9,
                                 approvalVotes:
@@ -81,7 +81,7 @@ const GetOwnedWalletObjects = () => {
                                     obj.fields?.proposal?.fields
                                         ?.cancellation_votes,
                                 creator: obj.fields?.proposal?.fields?.creator,
-                                id: obj.fields?.proposal?.fields?.id.id,
+                                id: index,
                                 status: obj.fields?.proposal?.fields?.status,
                                 to: obj.fields?.to,
                                 votes: [],

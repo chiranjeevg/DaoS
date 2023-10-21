@@ -1,8 +1,15 @@
 /* eslint-disable @next/next/no-img-element */
 import makeBlockie from "ethereum-blockies-base64";
+import {
+    useSignAndExecuteTransactionBlock,
+    useSuiClient,
+} from "@mysten/dapp-kit";
+import { useNetworkVariable } from "../networkConfig";
+import { TransactionBlock } from "@mysten/sui.js/transactions";
 
 const TransactionCard = ({
     id,
+    wallet,
     creator,
     amount,
     toAddr,
@@ -16,6 +23,69 @@ const TransactionCard = ({
 }) => {
     const approved = approvedBy.includes(account.address);
     const disapproved = disapprovedBy.includes(account.address);
+    const client = useSuiClient();
+    const packageId = useNetworkVariable("daoWalletPackageId");
+    const packageName = useNetworkVariable("daoWalletPackageName");
+    const { mutate: signAndExecute } = useSignAndExecuteTransactionBlock();
+
+    async function handleApprove(event) {
+        event.preventDefault();
+        const txb = new TransactionBlock();
+        console.log(wallet.id, id);
+
+        txb.moveCall({
+            arguments: [txb.object(wallet.id), txb.pure.u64(id)],
+            target: `${packageId}::${packageName}::approve_token_proposal`,
+        });
+
+        signAndExecute(
+            {
+                transactionBlock: txb,
+                options: {
+                    showEffects: true,
+                    showObjectChanges: true,
+                },
+            },
+            {
+                onSuccess: (tx) => {
+                    client
+                        .waitForTransactionBlock({ digest: tx.digest })
+                        .then(() => {
+                            alert("APPROVED");
+                        });
+                },
+            }
+        );
+    }
+
+    async function handleDisapprove(event) {
+        event.preventDefault();
+        const txb = new TransactionBlock();
+
+        txb.moveCall({
+            arguments: [txb.object(wallet.id), txb.pure.u64(id)],
+            target: `${packageId}::${packageName}::reject_token_proposal`,
+        });
+
+        signAndExecute(
+            {
+                transactionBlock: txb,
+                options: {
+                    showEffects: true,
+                    showObjectChanges: true,
+                },
+            },
+            {
+                onSuccess: (tx) => {
+                    client
+                        .waitForTransactionBlock({ digest: tx.digest })
+                        .then(() => {
+                            alert("DIS-APPROVED");
+                        });
+                },
+            }
+        );
+    }
 
     return account ? (
         <div
@@ -28,16 +98,13 @@ const TransactionCard = ({
             }`}>
             <div className="flex w-min items-center space-x-4 pr-2">
                 <span className="min-w-max px-2 font-mono text-sm font-medium">
-                    # {id.substring(0, 3)}
+                    # {id}
                 </span>
                 <div className="flex min-w-min flex-col">
                     <span className="font-mono font-semibold">{toAddr}</span>
                     <p className="font-mono font-semibold">
                         {amount}
-                        <span className="text-sm font-medium">
-                            {" "}
-                            {tokenName}
-                        </span>
+                        <span className="text-sm font-medium">{tokenName}</span>
                     </p>
                 </div>
             </div>

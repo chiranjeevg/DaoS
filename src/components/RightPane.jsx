@@ -188,7 +188,7 @@ const RightPane = ({ wallet, account }) => {
                     </form>
                 </div>
             </Modal>
-            <div className={showAddSignerBox ? " hidden " : ""}>
+            <div>
                 <TransactionsHistoryPage account={account} wallet={wallet} />
             </div>
         </>
