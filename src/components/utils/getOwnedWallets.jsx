@@ -51,6 +51,7 @@ const GetOwnedWalletObjects = () => {
                 if (data) {
                     let tempArr = [];
                     data.forEach((obj) => {
+                        const tempProposals = [];
                         const fields = obj.data?.content?.fields;
                         const walletObj = {
                             id: fields.id.id,
@@ -62,13 +63,40 @@ const GetOwnedWalletObjects = () => {
                             owner: fields.owner,
                             suiBalance: fields.sui / 10 ** 9,
                             lockedBalance: fields.lockedbalance / 10 ** 9,
-                            tokenProposals: fields.tokenProposals, //TODO: process tokenProposals
+                            tokenProposals: [],
                             members: [],
                         };
 
                         fields.members.fields?.contents?.forEach((mem) => {
                             walletObj.members.push(mem.fields?.key);
                         });
+
+                        fields.tokenProposals.forEach((obj) => {
+                            const proposalObj = {
+                                approvalVotes:
+                                    obj.fields?.proposal?.fields
+                                        ?.approval_votes,
+                                cancellationVotes:
+                                    obj.fields?.proposal?.fields
+                                        ?.cancellation_votes,
+                                creator: obj.fields?.proposal?.fields?.creator,
+                                id: obj.fields?.proposal?.fields?.id.id,
+                                status: obj.fields?.proposal?.fields?.status,
+                                to: obj.fields?.to,
+                                votes: [],
+                            };
+                            const votes =
+                                obj.fields?.proposal?.fields?.votes.fields;
+                            votes?.contents.forEach((obj) => {
+                                const temp = {
+                                    memberId: obj?.fields.key,
+                                    approved: obj?.fields.value,
+                                };
+                                proposalObj.votes.push(temp);
+                            });
+                            tempProposals.push(proposalObj);
+                        });
+                        walletObj.tokenProposals = tempProposals;
                         tempArr.push(walletObj);
                     });
                     setWalletObjs(tempArr);
