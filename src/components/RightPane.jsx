@@ -87,35 +87,41 @@ const RightPane = ({ wallet, account }) => {
     async function handleNewProposal(event) {
         event.preventDefault();
         const toAddress = event.target.toAddress.value;
-        const amount = parseInt(parseFloat(event.target.amount.value) * 10 ** 9);
+        const amount = parseInt(
+            parseFloat(event.target.amount.value) * 10 ** 9
+        );
 
-        const txb = new TransactionBlock()
+        const txb = new TransactionBlock();
 
         txb.moveCall({
-          arguments: [txb.object(event.target.daoAddress.value), txb.pure.address(toAddress), txb.pure.u64(amount)],
-          target: `${packageId}::${packageName}::create_token_praposal`,
-        })
+            arguments: [
+                txb.object(event.target.daoAddress.value),
+                txb.pure.address(toAddress),
+                txb.pure.u64(amount),
+            ],
+            target: `${packageId}::${packageName}::create_token_praposal`,
+        });
 
         signAndExecute(
-          {
-            transactionBlock: txb,
-            options: {
-              showEffects: true,
-              showObjectChanges: true,
+            {
+                transactionBlock: txb,
+                options: {
+                    showEffects: true,
+                    showObjectChanges: true,
+                },
             },
-          },
-          {
-            onSuccess: tx => {
-              client.waitForTransactionBlock({ digest: tx.digest }).then(() => {
-                setTimeout(() => {
-                  wallet.members.push(event.target.memberAddress.value)
-                  closeSignerModal()
-                }, 1000)
-              })
-            },
-          }
-        )
-
+            {
+                onSuccess: (tx) => {
+                    client
+                        .waitForTransactionBlock({ digest: tx.digest })
+                        .then(() => {
+                            setTimeout(() => {
+                                closeProposalModal();
+                            }, 1000);
+                        });
+                },
+            }
+        );
     }
 
     return wallet ? (
