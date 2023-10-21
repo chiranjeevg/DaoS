@@ -1,10 +1,22 @@
 import React, { useState } from "react";
 import Modal from "react-modal";
 import TopSectionPage from "./TopSectionPage";
+import {
+    useCurrentAccount,
+    useSignAndExecuteTransactionBlock,
+    useSuiClient,
+} from "@mysten/dapp-kit";
+import { useNetworkVariable } from "../networkConfig";
+import { TransactionBlock } from "@mysten/sui.js/transactions";
 
 const RightPane = ({ wallet, account }) => {
     const [showAddSignerBox, setShowAddSignerBox] = useState(false);
     const [showCreateProposalBox, setShowCreateProposalBox] = useState(false);
+    const client = useSuiClient();
+    const packageId = useNetworkVariable("daoWalletPackageId");
+    const packageName = useNetworkVariable("daoWalletPackageName");
+
+    const { mutate: signAndExecute } = useSignAndExecuteTransactionBlock();
 
     const customStyles = {
         content: {
@@ -36,6 +48,39 @@ const RightPane = ({ wallet, account }) => {
 
     async function handleAddNewMember(event) {
         event.preventDefault();
+        const txb = new TransactionBlock();
+
+        txb.moveCall({
+            arguments: [
+                txb.object(event.target.daoAddress.value),
+                txb.pure.address(event.target.memberAddress.value),
+            ],
+            target: `${packageId}::${packageName}::add_member`,
+        });
+
+        signAndExecute(
+            {
+                transactionBlock: txb,
+                options: {
+                    showEffects: true,
+                    showObjectChanges: true,
+                },
+            },
+            {
+                onSuccess: (tx) => {
+                    client
+                        .waitForTransactionBlock({ digest: tx.digest })
+                        .then(() => {
+                            setTimeout(() => {
+                                wallet.members.push(
+                                    event.target.memberAddress.value
+                                );
+                                closeSignerModal();
+                            }, 1000);
+                        });
+                },
+            }
+        );
     }
 
     async function handleNewProposal(event) {
