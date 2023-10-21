@@ -73,6 +73,7 @@ const GetOwnedWalletObjects = () => {
 
                         fields.tokenProposals.forEach((obj) => {
                             const proposalObj = {
+                                amount: Number(obj.fields?.amount) / 10 ** 9,
                                 approvalVotes:
                                     obj.fields?.proposal?.fields
                                         ?.approval_votes,
@@ -96,6 +97,7 @@ const GetOwnedWalletObjects = () => {
                             });
                             tempProposals.push(proposalObj);
                         });
+                        console.log(tempProposals);
                         walletObj.tokenProposals = tempProposals;
                         tempArr.push(walletObj);
                     });

@@ -8,6 +8,7 @@ import {
 } from "@mysten/dapp-kit";
 import { useNetworkVariable } from "../networkConfig";
 import { TransactionBlock } from "@mysten/sui.js/transactions";
+import TransactionsHistoryPage from "./TransactionHistoryPage";
 
 const RightPane = ({ wallet, account }) => {
     const [showAddSignerBox, setShowAddSignerBox] = useState(false);
@@ -188,7 +189,7 @@ const RightPane = ({ wallet, account }) => {
                 </div>
             </Modal>
             <div className={showAddSignerBox ? " hidden " : ""}>
-                {/* <TransactionsHistoryPage account={account} wallet={wallet} /> */}
+                <TransactionsHistoryPage account={account} wallet={wallet} />
             </div>
         </>
     ) : (

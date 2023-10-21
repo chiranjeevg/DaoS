@@ -38,7 +38,7 @@ const TopSectionPage = ({
                     />
                 </div>
                 <div className="flex flex-col">
-                    <span className="text-sm">DAO Wallet Contract</span>
+                    <span className="text-sm">{wallet.name}</span>
                     <span className="font-mono text-lg font-bold">
                         {wallet.id}
                     </span>
