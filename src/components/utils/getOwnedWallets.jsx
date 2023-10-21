@@ -22,9 +22,6 @@ const GetOwnedWalletObjects = () => {
                         {
                             StructType: `${packageId}::${packageName}::Member`,
                         },
-                        {
-                            AddressOwner: account.address,
-                        },
                     ],
                 },
                 options: {

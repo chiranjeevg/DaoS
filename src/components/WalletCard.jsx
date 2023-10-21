@@ -22,7 +22,7 @@ const WalletCard = ({ wallet }) => {
                         alt="Signer Blockie Image"
                     />
                 </div>
-                <div className="flex flex-col text-right space-y-1">
+                <div className="flex flex-col text-right space-y-0.5">
                     <span className="font-mono text-sm font-semibold italic">
                         {wallet.id}
                     </span>
