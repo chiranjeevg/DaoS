@@ -24,8 +24,9 @@ Now, let's walk through the setup process:
 1. Clone this repository to your local machine:
    ```bash
     git clone https://github.com/NonitMittal/DaoS.git
-    cd DaoS
     # Move to the project directory
+    cd DaoS
+    # Move to smart contracts directory
     cd contract
     # Build the contract
     sui move build
@@ -35,6 +36,7 @@ Now, let's walk through the setup process:
     cd ../
     # Install dependencies
     npm install
+    # update contract details in ./src/constants.js
     # Start the development server
     npm run preview/dev
 Now, your project should be up and running, and you can explore your DAO as a Service application.
@@ -49,7 +51,7 @@ Now, your project should be up and running, and you can explore your DAO as a Se
 - **Transaction Execution**: When a proposal is approved, transactions are executed, furthering the chosen causes.
 
 ## Virality Features
-- **NFT as Appreciation**: Donors are rewarded with NFTs as tokens of appreciation for their contributions, fostering a sense of recognition and gratitude.
+- **NFT as Appreciation**: Donators are rewarded with NFTs as tokens of appreciation for their contributions, fostering a sense of recognition and gratitude.
 
 ## Contributing
 
