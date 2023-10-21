@@ -91,16 +91,14 @@ const HomepageWallets = () => {
     async function handleDonation(event) {
         event.preventDefault();
         const txb = new TransactionBlock();
-        const coin = txb.add(
-            Transactions.SplitCoins(txb.gas, [
-                txb.pure(event.target.amount.value),
-            ])
-        );
+        const [coin] = txb.splitCoins(txb.gas, [1]);
+        const res = txb.transferObjects([coin], event.target.daoAddress.value);
+        console.log(coin, res);
+
         txb.moveCall({
             arguments: [txb.object(event.target.daoAddress.value), [coin]],
             target: `${packageId}::${packageName}::donate`,
         });
-        console.log(coin);
 
         signAndExecute(
             {
@@ -267,7 +265,9 @@ const HomepageWallets = () => {
                         <h2 className="my-auto inline-block text-xl font-bold">
                             Make a Donation
                         </h2>
-                        <button className="btn-dark" onClick={closeModal}>
+                        <button
+                            className="inline-block rounded bg-gray-900 px-4 py-2.5 text-sm font-medium text-white transition hover:scale-110 hover:shadow-xl focus:outline-none focus:ring active:bg-gray-500 disabled:scale-100 disabled:bg-gray-500 disabled:hover:shadow-none"
+                            onClick={closeModal}>
                             x
                         </button>
                     </div>
