@@ -127,7 +127,7 @@ module daowallet::DAOWallet{
     transfer::transfer(nft,tx_context::sender(ctx));
   }
 
-  public entry fun create_token_praposal(wallet: &mut Wallet, to: address, amount: u64, ctx: &mut TxContext){
+  public entry fun create_token_proposal(wallet: &mut Wallet, to: address, amount: u64, ctx: &mut TxContext){
     let tokenProposal = TokenProposal {
       proposal: Proposal {
         id: object::new(ctx),
